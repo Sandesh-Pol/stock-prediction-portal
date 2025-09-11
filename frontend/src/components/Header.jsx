@@ -37,7 +37,7 @@ export default function Header() {
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <button
-            onClick={() => navigate('/signin')}
+            onClick={() => navigate('/login')}
             className="text-sm/6 font-semibold text-gray-900 dark:text-white"
           >
             Log in <span aria-hidden="true">&rarr;</span>
