@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
+import { AuthContext } from "../AuthProvider";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { setIsLoggedIn } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,22 +20,16 @@ export default function LoginForm() {
     setSuccess("");
     setLoading(true);
 
-    const payload = {
-      email: email,
-      password: password,
-    };
-
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/login/",
-        payload
-      );
-
+      const response = await axiosInstance.post("/api/v1/login/", { email, password });
       if (response.status === 200) {
+        // Save tokens
+        localStorage.setItem("accessToken", response.data.access);
+        localStorage.setItem("refreshToken", response.data.refresh);
+
+        setIsLoggedIn(true); // Update context
         setSuccess("Login successful!");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1500);
+        setTimeout(() => navigate("/dashboard"), 1500);
       }
     } catch (err) {
       const message =

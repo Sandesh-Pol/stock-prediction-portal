@@ -30,7 +30,7 @@ export default function RegisterForm() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/register/",
+        "/api/v1/register/",
         payload
       );
 
