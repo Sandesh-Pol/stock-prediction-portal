@@ -1,15 +1,11 @@
-# stockpredictor/serializers.py
 from rest_framework import serializers
+from .models import StockPrediction
 
-# Input Serializer
 class StockRequestSerializer(serializers.Serializer):
     ticker = serializers.CharField(required=True)
     company_name = serializers.CharField(required=True)
 
-# Output Serializer
-class StockPredictionSerializer(serializers.Serializer):
-    company = serializers.CharField()
-    company_name = serializers.CharField()
-    graphs = serializers.DictField()
-    prediction_graph = serializers.DictField()
-    metrics = serializers.DictField()
+class StockPredictionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StockPrediction
+        fields = ["id", "ticker", "company_name", "graphs", "prediction_graph", "metrics", "created_at"]

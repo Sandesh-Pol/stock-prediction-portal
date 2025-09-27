@@ -1,46 +1,191 @@
-import DashboardUI from "./dashbord/DashboardUI";
-// Mock data matching the API response format
-const mockStockData = {
-  company: "AAPL",
-  company_name: "Apple Inc.",
-  graphs: {
-    close_price: [
-      150.25, 152.30, 149.80, 151.75, 154.20, 153.45, 155.90, 158.12, 156.75, 159.30,
-      161.45, 160.20, 163.80, 165.40, 162.90, 167.25, 169.80, 168.45, 171.20, 173.65,
-      172.30, 175.40, 178.20, 176.85, 179.50, 182.30, 180.95, 184.70, 187.25, 185.80
-    ],
-    ma_100: [
-      148.50, 149.20, 149.85, 150.40, 151.05, 151.75, 152.40, 153.10, 153.80, 154.45,
-      155.15, 155.85, 156.50, 157.20, 157.95, 158.65, 159.40, 160.10, 160.85, 161.55,
-      162.30, 163.05, 163.75, 164.50, 165.25, 166.00, 166.70, 167.45, 168.20, 168.95
-    ],
-    ma_200: [
-      145.20, 145.60, 146.00, 146.35, 146.75, 147.10, 147.50, 147.85, 148.25, 148.60,
-      149.00, 149.35, 149.75, 150.10, 150.50, 150.85, 151.25, 151.60, 152.00, 152.35,
-      152.75, 153.10, 153.50, 153.85, 154.25, 154.60, 155.00, 155.35, 155.75, 156.10
-    ]
-  },
-  prediction_graph: {
-    labels: [
-      "2024-01-15", "2024-01-16", "2024-01-17", "2024-01-18", "2024-01-19",
-      "2024-01-22", "2024-01-23", "2024-01-24", "2024-01-25", "2024-01-26",
-      "2024-01-29", "2024-01-30", "2024-01-31", "2024-02-01", "2024-02-02"
-    ],
-    data: [
-      188.50, 190.25, 189.80, 192.40, 194.15, 193.70, 196.30, 198.85, 197.45, 200.20,
-      202.75, 201.90, 204.60, 207.25, 206.40
-    ]
-  },
-  metrics: {
-    mse: 0.1247,
-    rmse: 0.3531,
-    mae: 0.2834,
-    r2: 0.8923
-  }
-};
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
-const Dashboard = () => {
-  return <DashboardUI data={mockStockData} />;
-};
+// Card component for dashboard items
+const GlassCard = ({ children }) => (
+  <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow">
+    {children}
+  </div>
+);
 
-export default Dashboard;
+export default function Dashboard() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_BASE_API}/api/v1/predict/`
+        );
+        setData(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading)
+    return <p className="text-center mt-20 text-gray-200">Loading...</p>;
+  if (!data)
+    return <p className="text-center mt-20 text-gray-200">No data found</p>;
+
+  // Defensive extraction
+  const close_price = data.graphs?.close_price || [];
+  const ma100 = data.graphs?.ma_100 || [];
+  const ma200 = data.graphs?.ma_200 || [];
+  const predLabels = data.prediction_graph?.labels || [];
+  const predData = data.prediction_graph?.data || [];
+
+  // Build first chart (close, ma100, ma200)
+  const priceData = close_price.map((val, i) => ({
+    idx: i,
+    close: val,
+    ma100: ma100[i],
+    ma200: ma200[i],
+  }));
+
+  // Build second chart with predicted vs actual
+  const startIdx = close_price.length - predData.length;
+  const predictionData = predData.map((predVal, i) => ({
+    date: predLabels[i] || i,
+    predicted: predVal,
+    actual: close_price[startIdx + i],
+  }));
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col md:flex-row">
+
+
+      {/* Main Content */}
+      <main className="flex-1 p-6">
+        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+          {data.company_name}
+          {data.company && ` (${data.company})`}
+        </h1>
+
+        <div className="flex flex-col gap-8">
+          {/* Stock Price Chart */}
+          <GlassCard id="stock">
+            <h2 className="text-xl font-semibold mb-4">Stock Prices</h2>
+            <div className="w-full h-64 sm:h-80 md:h-96">
+              {priceData.length > 0 && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={priceData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#555" />
+                    <XAxis dataKey="idx" tick={{ fill: "#ccc" }} />
+                    <YAxis tick={{ fill: "#ccc" }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#222",
+                        border: "none",
+                        color: "#fff",
+                      }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="close"
+                      stroke="#60a5fa"
+                      dot={false}
+                      strokeWidth={2}
+                      name="Close Price"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="ma100"
+                      stroke="#34d399"
+                      dot={false}
+                      strokeDasharray="4 2"
+                      strokeWidth={2}
+                      name="MA 100"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="ma200"
+                      stroke="#fbbf24"
+                      dot={false}
+                      strokeDasharray="2 4"
+                      strokeWidth={2}
+                      name="MA 200"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </GlassCard>
+
+          {/* Prediction Chart */}
+          <GlassCard id="prediction">
+            <h2 className="text-xl font-semibold mb-4">
+              Predicted vs Actual Prices
+            </h2>
+            <div className="w-full h-64 sm:h-80 md:h-96">
+              {predictionData.length > 0 && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={predictionData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#555" />
+                    <XAxis dataKey="date" tick={{ fill: "#ccc" }} />
+                    <YAxis tick={{ fill: "#ccc" }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#222",
+                        border: "none",
+                        color: "#fff",
+                      }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="predicted"
+                      stroke="#f472b6"
+                      dot={false}
+                      strokeWidth={2}
+                      name="Predicted"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="actual"
+                      stroke="#60a5fa"
+                      dot={false}
+                      strokeWidth={2}
+                      name="Actual"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </GlassCard>
+        </div>
+
+        {/* Metrics grid */}
+        <div
+          id="metrics"
+          className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {Object.entries(data.metrics || {}).map(([key, value]) => (
+            <GlassCard key={key}>
+              <h3 className="font-medium text-lg uppercase">{key}</h3>
+              <p className="text-2xl font-bold mt-2">
+                {isNaN(value) ? value : Number(value).toFixed(2)}
+              </p>
+            </GlassCard>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}
