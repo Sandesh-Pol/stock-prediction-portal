@@ -29,7 +29,7 @@ export default function LoginForm() {
 
         setIsLoggedIn(true); // Update context
         setSuccess("Login successful!");
-        setTimeout(() => navigate("/dashboard"), 1500);
+        setTimeout(() => navigate("/"), 1500);
       }
     } catch (err) {
       const message =

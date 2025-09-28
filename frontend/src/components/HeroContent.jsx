@@ -1,21 +1,21 @@
 // src/components/HeroContent.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import APIDialog from './APIDialog'; // Import the dialog component
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import APIDialog from "./APIDialog"; // Import the dialog component
 
 export default function HeroContent() {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleAPIResponse = (response) => {
-    console.log('API Response:', response);
+    console.log("API Response:", response);
     // Handle the API response here - you can:
     // 1. Show a success message
     // 2. Navigate to dashboard with the data
     // 3. Store the response in state/context
     // 4. Display results in another component
-    
-    alert('Prediction request sent successfully!');
+
+    alert("Prediction request sent successfully!");
     // Optionally navigate to dashboard after successful API call
     // navigate('/dashboard');
   };
@@ -30,18 +30,22 @@ export default function HeroContent() {
       <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56 text-center">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:text-gray-400 dark:ring-white/10 dark:hover:ring-white/20">
-            Announcing our next round of funding.{' '}
-            <a href="#" className="font-semibold text-indigo-600 dark:text-indigo-400">
+            Announcing our next round of funding.{" "}
+            <a
+              href="#"
+              className="font-semibold text-indigo-600 dark:text-indigo-400"
+            >
               <span aria-hidden="true" className="absolute inset-0"></span>
               Read more <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </div>
         <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl dark:text-white">
-          Data to enrich your online business
+          Smarter Stock Price Predictions
         </h1>
         <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8 dark:text-gray-400">
-          Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.
+        Stay ahead of the market with accurate, transparent stock price predictions.
+        Interactive charts, key metrics, and actionable insights at your fingertips.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <button
@@ -50,7 +54,10 @@ export default function HeroContent() {
           >
             Get started
           </button>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900 dark:text-white">
+          <a
+            href="#"
+            className="text-sm/6 font-semibold text-gray-900 dark:text-white"
+          >
             Learn more <span aria-hidden="true">→</span>
           </a>
         </div>
