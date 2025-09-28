@@ -29,16 +29,10 @@ export default function RegisterForm() {
     };
 
     try {
-      const response = await axios.post(
-        "/api/v1/register/",
-        payload
-      );
-
+      const response = await axios.post("/api/v1/register/", payload);
       if (response.status === 201 || response.status === 200) {
-        setSuccess("Registration successful!");
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
+        setSuccess("🎉 Registration successful!");
+        setTimeout(() => navigate("/login"), 1500);
       }
     } catch (err) {
       const data = err.response?.data || {};
@@ -56,132 +50,109 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-gray-900">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img src={logo} alt="Your Company" className="mx-auto h-10 w-auto" />
-        <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-white">
-          Create your account
-        </h2>
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-gray-950 px-6 py-12">
+      <div className="w-full max-w-md space-y-8 rounded-xl bg-gray-900/80 p-8 shadow-2xl backdrop-blur">
+        {/* Logo */}
+        <div className="text-center">
+          <img src={logo} alt="Your Company" className="mx-auto h-12 w-auto" />
+          <h2 className="mt-6 text-2xl font-bold tracking-tight text-white">
+            Create your account
+          </h2>
+          <p className="mt-2 text-sm text-gray-400">
+            Join us today and explore 🚀
+          </p>
+        </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">
+        {/* Alerts */}
         {success && (
-          <div className="mb-4 rounded bg-green-600 p-3 text-white text-center">
+          <div className="rounded bg-green-600/80 p-3 text-center text-sm text-white">
             {success}
           </div>
         )}
         {error && (
-          <div className="mb-4 rounded bg-red-600 p-3 text-white text-center">
+          <div className="rounded bg-red-600/80 p-3 text-center text-sm text-white">
             {error}
           </div>
         )}
-      </div>
 
-      <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* First Name */}
-          <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-100">
-              First Name
-            </label>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid grid-cols-2 gap-4">
+            {/* First Name */}
             <input
               id="firstName"
-              name="firstName"
               type="text"
               required
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm"
-              placeholder="John"
+              className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              placeholder="First name"
             />
-          </div>
-
-          {/* Last Name */}
-          <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-100">
-              Last Name
-            </label>
+            {/* Last Name */}
             <input
               id="lastName"
-              name="lastName"
               type="text"
               required
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm"
-              placeholder="Doe"
+              className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              placeholder="Last name"
             />
           </div>
 
           {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-100">
-              Email address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm"
-              placeholder="you@example.com"
-            />
-          </div>
+          <input
+            id="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+            placeholder="you@example.com"
+          />
 
           {/* Password */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-100">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm"
-              placeholder="••••••••"
-            />
-          </div>
+          <input
+            id="password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+            placeholder="••••••••"
+          />
 
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`flex w-full justify-center items-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
-                loading ? "cursor-not-allowed opacity-50" : ""
-              }`}
-            >
-              {loading ? (
-                <svg
-                  className="h-5 w-5 animate-spin text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
-                </svg>
-              ) : (
-                "Register"
-              )}
-            </button>
-          </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? (
+              <svg
+                className="h-5 w-5 animate-spin text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+            ) : (
+              "Register"
+            )}
+          </button>
         </form>
       </div>
     </div>

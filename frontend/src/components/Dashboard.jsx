@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 import {
   LineChart,
@@ -10,7 +12,8 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { Menu, PlusCircle, History, Info, UserCircle2 } from "lucide-react";
+import { Menu, PlusCircle, History, Home, UserCircle2 } from "lucide-react";
+import APIDialog from "./APIDialog";
 
 const GlassCard = ({ children }) => (
   <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow">
@@ -22,20 +25,25 @@ export default function Dashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_BASE_API}/api/v1/predict/`
+      );
+      setData(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASE_API}/api/v1/predict/`
-        );
-        setData(res.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
@@ -64,6 +72,18 @@ export default function Dashboard() {
     actual: close_price[startIdx + i],
   }));
 
+  const handleGetStarted = () => {
+    // Open the API dialog instead of navigating
+    setIsDialogOpen(true);
+  };
+
+  const handleAPIResponse = async (response) => {
+    console.log("API Response:", response);
+    // refresh data after API submit
+    await fetchData();
+    setIsDialogOpen(false); // close dialog
+  };
+
   return (
     <div className="h-screen w-screen bg-gray-900 text-gray-100 flex overflow-hidden">
       {/* Sidebar */}
@@ -91,11 +111,13 @@ export default function Dashboard() {
           </h2>
           <button
             className="flex items-center gap-3 px-3 py-2 w-full rounded hover:bg-gray-700"
-            onClick={() =>
-              document
-                .getElementById("stock")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
+            onClick={() => navigate("/")}
+          >
+            <Home size={20} /> <span>Home</span>
+          </button>
+          <button
+            className="flex items-center gap-3 px-3 py-2 w-full rounded hover:bg-gray-700"
+            onClick={handleGetStarted}
           >
             <PlusCircle size={20} /> <span>Add Another</span>
           </button>
@@ -109,16 +131,7 @@ export default function Dashboard() {
           >
             <History size={20} /> <span>History</span>
           </button>
-          <button
-            className="flex items-center gap-3 px-3 py-2 w-full rounded hover:bg-gray-700"
-            onClick={() =>
-              document
-                .getElementById("metrics")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            <Info size={20} /> <span>More Info</span>
-          </button>
+          
 
           {/* Metrics Section */}
           <div id="metrics" className="mt-8">
@@ -282,6 +295,13 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
+      {/* API Dialog */}
+      <APIDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSubmit={handleAPIResponse}
+        title="Stock Prediction API"
+      />
     </div>
   );
 }
