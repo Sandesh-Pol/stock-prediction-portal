@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 
 export default function RegisterForm() {
   const [firstName, setFirstName] = useState("");
@@ -24,17 +24,19 @@ export default function RegisterForm() {
     const payload = {
       first_name: firstName,
       last_name: lastName,
-      email: email,
-      password: password,
+      email,
+      password,
     };
 
     try {
-      const response = await axios.post("/api/v1/register/", payload);
+      const response = await axiosInstance.post("/api/v1/register/", payload);
+
       if (response.status === 201 || response.status === 200) {
         setSuccess("🎉 Registration successful!");
         setTimeout(() => navigate("/login"), 1500);
       }
     } catch (err) {
+      console.error(err);
       const data = err.response?.data || {};
       const message =
         data.first_name?.[0] ||
@@ -80,7 +82,6 @@ export default function RegisterForm() {
           <div className="grid grid-cols-2 gap-4">
             {/* First Name */}
             <input
-              id="firstName"
               type="text"
               required
               value={firstName}
@@ -90,7 +91,6 @@ export default function RegisterForm() {
             />
             {/* Last Name */}
             <input
-              id="lastName"
               type="text"
               required
               value={lastName}
@@ -102,7 +102,6 @@ export default function RegisterForm() {
 
           {/* Email */}
           <input
-            id="email"
             type="email"
             required
             value={email}
@@ -113,7 +112,6 @@ export default function RegisterForm() {
 
           {/* Password */}
           <input
-            id="password"
             type="password"
             required
             value={password}
