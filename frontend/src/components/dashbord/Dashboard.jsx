@@ -21,6 +21,8 @@ export default function Dashboard() {
     try {
       const res = await axiosInstance.get("/api/v1/predict/"); // <-- axiosInstance handles token
       setData(res.data);
+      console.log(res.data);
+      
     } catch (err) {
       console.error(err);
     } finally {
@@ -71,7 +73,7 @@ export default function Dashboard() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm">{data.username || "User"}</span>
+            <span className="text-sm">{data.first_name || "User"}</span>
             <UserCircle2 size={28} className="text-gray-300" />
           </div>
         </div>

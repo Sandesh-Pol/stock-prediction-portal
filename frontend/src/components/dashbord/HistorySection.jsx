@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../axiosInstance";
 
 export default function HistorySection() {
   const [history, setHistory] = useState([]);
@@ -11,19 +11,7 @@ export default function HistorySection() {
   const fetchHistory = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("accessToken");
-      if (!token) throw new Error("No access token found. Please login.");
-
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASE_API}/api/v1/predict/history/`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // ✅ attach access token
-          },
-        }
-      );
-
+      const res = await axiosInstance.get("/api/v1/predict/history/"); 
       setHistory(res.data.results || []);
     } catch (err) {
       console.error(err);
