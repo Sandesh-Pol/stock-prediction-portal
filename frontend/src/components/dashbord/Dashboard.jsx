@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Menu, UserCircle2 } from "lucide-react";
 import Sidebar from "./Sidebar";
 import GraphSection from "./GraphSection";
 import HistorySection from "./HistorySection";
-import APIDialog from "./APIDialog";
+import APIDialog from "../APIDialog";
+import axiosInstance from "../../axiosInstance";
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
@@ -19,42 +19,23 @@ export default function Dashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("accessToken"); 
-      if (!token) throw new Error("No access token found. Please login.");
-  
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASE_API}/api/v1/predict/`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, 
-          },
-        }
-      );
-  
+      const res = await axiosInstance.get("/api/v1/predict/"); // <-- axiosInstance handles token
       setData(res.data);
     } catch (err) {
       console.error(err);
-      if (err.response?.status === 401) {
-        alert("Token invalid or expired. Please login again.");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        navigate("/login");
-      } else {
-        alert(err.response?.data?.detail || "Failed to fetch data.");
-      }
     } finally {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  if (loading) return <p className="text-center mt-20 text-gray-200">Loading...</p>;
-  if (!data) return <p className="text-center mt-20 text-gray-200">No data found</p>;
+  if (loading)
+    return <p className="text-center mt-20 text-gray-200">Loading...</p>;
+  if (!data)
+    return <p className="text-center mt-20 text-gray-200">No data found</p>;
 
   const handleGetStarted = () => setIsDialogOpen(true);
 

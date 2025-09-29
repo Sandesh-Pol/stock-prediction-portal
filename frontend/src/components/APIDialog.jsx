@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../axiosInstance";
 
 const APIDialog = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -30,19 +30,11 @@ const APIDialog = ({ isOpen, onClose }) => {
     setLoading(true);
     setError("");
     setSuccess("");
-
+  
     try {
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_BASE_API}/api/v1/predict/`,
-        formData,
-        { 
-          headers: { 
-            "Content-Type": "application/json",
-            ...getAuthHeader()
-          } 
-        }
-      );
-
+      // Use axiosInstance to automatically handle token & headers
+      await axiosInstance.post("/api/v1/predict/", formData);
+  
       setSuccess("Prediction saved successfully!");
       setTimeout(() => {
         onClose();
@@ -51,15 +43,15 @@ const APIDialog = ({ isOpen, onClose }) => {
     } catch (err) {
       console.error(err);
       setError(
-        err.response?.data?.detail || 
-        err.response?.data?.error || 
+        err.response?.data?.detail ||
+        err.response?.data?.error ||
         "Failed to fetch data. Try again."
       );
     } finally {
       setLoading(false);
     }
   };
-
+  
   if (!isOpen) return null;
 
   return (
