@@ -34,22 +34,13 @@ https://github.com/user-attachments/assets/1ef1e732-02ff-4e3b-baa7-472f4d90e959
 
 Check out the app in action!  
 
-
----
-
-## 🖼 Screenshots
-
-| Hero Section | Dashboard | Prediction Form |
-|--------------|-----------|----------------|
-| ![Hero](screenshots/hero.png) | ![Dashboard](screenshots/dashboard.png) | ![Form](screenshots/prediction-form.png) |
-
 ---
 
 ## ⚡ Installation
 
 1. **Clone the repository**:
 
-git clone https://github.com/yourusername/stock-price-prediction.git
+git clone https://github.com/Sandesh-Pol/stock-prediction-portal
 cd stock-price-prediction
 
 2. **Backend Setup**:
