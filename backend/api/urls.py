@@ -1,7 +1,11 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from user.views import RegisterView, LoginView
-from api.views import StockPredictionView, StockHistoryView
+from api.views import (
+    StockPredictionView,
+    StockHistoryView,
+    StockPredictionDetailView,
+)
 
 urlpatterns = [
     # Auth
@@ -10,7 +14,7 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
     # Predictions
-    path("predict/", StockPredictionView.as_view(), name="stock-predict"),  # POST + GET latest
-    path("predict/history/", StockHistoryView.as_view(), name="stock-history"),  # paginated history
-    path("predict/<int:pk>/", StockPredictionView.as_view(), name="stock-detail"),  # view single record
+    path("predict/", StockPredictionView.as_view(), name="stock-predict"),          # POST + GET latest
+    path("predict/history/", StockHistoryView.as_view(), name="stock-history"),     # paginated history
+    path("predict/<int:pk>/", StockPredictionDetailView.as_view(), name="stock-detail"),  # single record
 ]

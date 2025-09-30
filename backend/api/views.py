@@ -4,7 +4,7 @@ from rest_framework import status
 from .utils import make_prediction
 from .serializers import StockRequestSerializer, StockPredictionSerializer
 from .models import StockPrediction
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import RetrieveDestroyAPIView,ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from .models import StockPrediction
@@ -70,3 +70,12 @@ class StockHistoryView(ListAPIView):
     def get_queryset(self):
         # Show history only for logged-in user
         return StockPrediction.objects.filter(user=self.request.user).order_by("-created_at")
+
+
+class StockPredictionDetailView(RetrieveDestroyAPIView):
+    serializer_class = StockPredictionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return StockPrediction.objects.filter(user=self.request.user)
+

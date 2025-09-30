@@ -1,13 +1,33 @@
 import React from "react";
-import { Home, PlusCircle, History, UserCircle2 } from "lucide-react";
+import {
+  Home,
+  PlusCircle,
+  History,
+  UserCircle2,
+  LineChart,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar({
   sidebarOpen,
   setSidebarOpen,
-  navigate,
   handleGetStarted,
   setActiveSection,
 }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear JWT tokens
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    // Optional: clear any user-related data
+    localStorage.removeItem("user");
+
+    // Redirect to login
+    navigate("/login");
+  };
+
   return (
     <div
       className={`fixed md:static top-0 left-0 h-full bg-gray-800 border-r border-gray-700 transform 
@@ -51,20 +71,21 @@ export default function Sidebar({
           className="flex items-center gap-3 px-3 py-2 w-full rounded hover:bg-gray-700"
           onClick={() => setActiveSection("graphs")}
         >
-          📊 <span>Graphs</span>
+          <LineChart size={20} />
+          <span>Graphs</span>
         </button>
         <button
-              className="flex items-center gap-3 px-3 py-2 w-full rounded hover:bg-gray-700"
-              onClick={() => alert("Settings Clicked")}
-            >
-              <UserCircle2 size={20} /> <span>Settings</span>
-            </button>
-            <button
-              className="flex items-center gap-3 px-3 py-2 w-full rounded hover:bg-gray-700 text-red-400 hover:text-red-300"
-              onClick={() => alert("Logout Clicked")}
-            >
-              ✕ <span>Logout</span>
-            </button>
+          className="flex items-center gap-3 px-3 py-2 w-full rounded hover:bg-gray-700"
+          onClick={() => alert("Settings Clicked")}
+        >
+          <UserCircle2 size={20} /> <span>Settings</span>
+        </button>
+        <button
+          className="flex items-center gap-3 px-3 py-2 w-full rounded hover:bg-gray-700 text-red-400 hover:text-red-300"
+          onClick={handleLogout}
+        >
+          ✕ <span>Logout</span>
+        </button>
       </nav>
 
       <div className="p-2 border-t border-gray-700">

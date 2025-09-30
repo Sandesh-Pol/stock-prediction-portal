@@ -2,21 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 
-const APIDialog = ({ isOpen, onClose }) => {
+const APIDialog = ({ isOpen, onClose, onRecordAdded }) => {
   const [formData, setFormData] = useState({
-    ticker: "AAPL",
-    company_name: "Apple",
+    ticker: "",
+    company_name: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(""); 
   const navigate = useNavigate();
-
-  // Helper to get JWT header
-  const getAuthHeader = () => {
-    const token = localStorage.getItem("accessToken");
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -30,28 +24,34 @@ const APIDialog = ({ isOpen, onClose }) => {
     setLoading(true);
     setError("");
     setSuccess("");
-  
+
     try {
-      // Use axiosInstance to automatically handle token & headers
-      await axiosInstance.post("/api/v1/predict/", formData);
-  
-      setSuccess("Prediction saved successfully!");
+      const res = await axiosInstance.post("/api/v1/predict/", formData);
+
+      setSuccess("Record added successfully!");
+      setFormData({ ticker: "", company_name: "" }); // reset form
+
+      if (onRecordAdded) {
+        onRecordAdded(res.data); // notify parent to refresh history
+      }
+
+      // Optionally auto-close after a short delay
       setTimeout(() => {
+        setSuccess("");
         onClose();
-        navigate("/dashboard"); // optional redirect
       }, 1500);
     } catch (err) {
       console.error(err);
       setError(
         err.response?.data?.detail ||
         err.response?.data?.error ||
-        "Failed to fetch data. Try again."
+        "Failed to add record. Try again."
       );
     } finally {
       setLoading(false);
     }
   };
-  
+
   if (!isOpen) return null;
 
   return (
@@ -64,6 +64,9 @@ const APIDialog = ({ isOpen, onClose }) => {
         className="relative w-full max-w-md rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-2xl ring-1 ring-gray-200 dark:ring-gray-700"
         onClick={(e) => e.stopPropagation()}
       >
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Add New Prediction
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -75,6 +78,7 @@ const APIDialog = ({ isOpen, onClose }) => {
               value={formData.ticker}
               onChange={handleInputChange}
               className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              placeholder="AAPL"
               required
             />
           </div>
@@ -88,12 +92,21 @@ const APIDialog = ({ isOpen, onClose }) => {
               value={formData.company_name}
               onChange={handleInputChange}
               className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              placeholder="Apple"
               required
             />
           </div>
 
-          {error && <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/40 p-2 rounded-md">{error}</div>}
-          {success && <div className="text-sm text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/40 p-2 rounded-md">{success}</div>}
+          {error && (
+            <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/40 p-2 rounded-md">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="text-sm text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/40 p-2 rounded-md">
+              {success}
+            </div>
+          )}
 
           <button
             type="submit"
@@ -108,12 +121,25 @@ const APIDialog = ({ isOpen, onClose }) => {
                   fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v2a6 6 0 00-6 6H4z"></path>
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v2a6 6 0 00-6 6H4z"
+                  ></path>
                 </svg>
                 Loading...
               </>
-            ) : "Submit"}
+            ) : (
+              "Add Record"
+            )}
           </button>
         </form>
       </div>

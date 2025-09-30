@@ -22,7 +22,6 @@ export default function Dashboard() {
       const res = await axiosInstance.get("/api/v1/predict/"); // <-- axiosInstance handles token
       setData(res.data);
       console.log(res.data);
-      
     } catch (err) {
       console.error(err);
     } finally {
@@ -44,6 +43,17 @@ export default function Dashboard() {
   const handleAPIResponse = async () => {
     await fetchData();
     setIsDialogOpen(false);
+  };
+
+  const handleViewPrediction = async (id) => {
+    try {
+      const res = await axiosInstance.get(`/api/v1/predict/${id}/`);
+      setData(res.data); // this updates GraphSection
+      setActiveSection("graphs"); // switch to graph view
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load prediction details.");
+    }
   };
 
   return (
@@ -82,7 +92,7 @@ export default function Dashboard() {
           {activeSection === "graphs" ? (
             <GraphSection data={data} />
           ) : (
-            <HistorySection />
+            <HistorySection onView={handleViewPrediction} />
           )}
         </main>
       </div>
