@@ -28,9 +28,12 @@ Stay ahead of the market with **accurate predictions**, **interactive charts**, 
 
 ## 🎬 Demo Video
 
+
+https://github.com/user-attachments/assets/1ef1e732-02ff-4e3b-baa7-472f4d90e959
+
+
 Check out the app in action!  
 
-[![Watch Demo](screenshots/demo-thumbnail.png)](https://www.youtube.com/watch?v=YOUR_VIDEO_LINK)
 
 ---
 
