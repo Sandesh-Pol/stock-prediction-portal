@@ -66,7 +66,5 @@ python manage.py runserver
 
 **Sandesh Pol**
 
-- ✉️ Email: [your.email@example.com](mailto:sandeshpol268@gmail.com.com)
+- ✉️ Email: [sandeshpol268@example.com](mailto:sandeshpol268@gmail.com.com)
 - 🌐 LinkedIn: [linkedin.com/in/sandesh-pol](https://linkedin.com/in/sandesh-pol-dev444)
-- 🐦 Twitter: [twitter.com/yourhandle](https://twitter.com/yourhandle)
-
